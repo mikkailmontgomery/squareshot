@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<style>
@@ -11,6 +12,8 @@ var aKey = false;
 var sKey =false;
 var dKey =false;
 var game;
+var squaresTall = 40;
+var squaresWide = 40;
 var Boardarr;
 var worldSquares = [];
 
@@ -55,7 +58,7 @@ function gameInstance(){
 		this.canvas=document.getElementById('game'),
 		this.ctx=this.canvas.getContext("2d")
 }
-window.onload = 
+window.onload =
 function(){
 game = new gameInstance();
 game.canvas.focus();
@@ -79,14 +82,14 @@ Boardarr = getBoardArray(game.width,game.height)
 						Boardarr.top[20] + 3,
 						(Boardarr.side[playerSquare.left + 1] - Boardarr.side[playerSquare.left])-6,
 						(Boardarr.top[playerSquare.top + 1] - Boardarr.top[playerSquare.top])-6);
-  for(x=1;x<41;x++){
+  for(x=0;x<squaresWide;x++){
     worldSquares[x]=[];
-    for(y=1;y<41;y++){
+    for(y=0;y<squaresTall;y++){
      // console.log(x,y,'yo')
       worldSquares[x][y] = 0;
     }
   }
-  //worldSquares = 
+  //worldSquares =
   genWorld();
   drawWorld();
 	animate();
@@ -101,8 +104,8 @@ function genWorld(){
   countOfRandomSquares = Math.floor((Math.random() * countOfRandomSquares) + 1)
   console.log(countOfRandomSquares);
   for (i=0;i<countOfRandomSquares;i++){
-    var x = Math.floor((Math.random() * 40) + 1);
-    var y = Math.floor((Math.random() * 40) + 1);
+    var x = Math.floor((Math.random() * squaresWide) + 1);
+    var y = Math.floor((Math.random() * squaresTall) + 1);
     //console.log(x,y)
     worldSquares[x][y] = 1;
     //world.push(randomSquare(40,40));
@@ -129,43 +132,45 @@ return false;
 function GameProc(){
 
   playerSquare.previous = [playerSquare.left,playerSquare.top];
+	//document.getElementById('debug').innerHTML = worldSquares[playerSquare.left - 1][playerSquare.top] + ' ' + playerSquare.left + ' ' + playerSquare.top
 	if (aKey == true){
-		if(worldSquares[playerSquare.left - 1][playerSquare.top] == 0 && playerSquare.left - 1 > 0){
+		if(worldSquares[playerSquare.left - 1][playerSquare.top] == 0 && playerSquare.left - 1 >= 0){
     playerSquare.left--;
     }
   }
   if (dKey == true){
-    if(worldSquares[playerSquare.left + 1][playerSquare.top] == 0 && playerSquare.left + 1 < 41){
+    if(worldSquares[playerSquare.left + 1][playerSquare.top] == 0 && playerSquare.left + 1 <= squaresWide){
     playerSquare.left++;
     }
   }
   if (wKey == true){
-    if(worldSquares[playerSquare.left][playerSquare.top - 1] == 0 && playerSquare.top -1 > 0){
+    if(worldSquares[playerSquare.left][playerSquare.top - 1] == 0 && playerSquare.top -1 >= 0){
     playerSquare.top--;
     }
   }
   if (sKey == true){
-    if(worldSquares[playerSquare.left][playerSquare.top + 1] == 0 && playerSquare.top +1 < 41){
+		//document.getElementById('debug').innerHTML = worldSquares[playerSquare.left][playerSquare.top + 1] + ' ' + playerSquare.left + ' ' + playerSquare.top
+    if(worldSquares[playerSquare.left][playerSquare.top + 1] == 0 && playerSquare.top +1 <= squaresTall){
     playerSquare.top++;
     }
   }
 
 
 		//console.log(playerSquare.left)
-	
+
 }
 
 function drawWorld(){
-//  for(i=0;i<worldSquares.length;i++){  
+//  for(i=0;i<worldSquares.length;i++){
 //  game.ctx.fillRect(Boardarr.side[worldSquares[i][0]] + 3,
 //            Boardarr.top[worldSquares[i][1]] + 3,
 //            (Boardarr.side[worldSquares[i][0] + 1] - Boardarr.side[worldSquares[i][0]])-6,
 //            (Boardarr.top[worldSquares[i][1] + 1] - Boardarr.top[worldSquares[i][1]])-6);
 //
 //}
-  for(x=1;x<41;x++){
+  for(x=0;x<squaresWide;x++){
     //worldSquares[x]=[];
-    for(y=1;y<41;y++){
+    for(y=0;y<squaresTall;y++){
      // console.log(x,y,'yo')
     // console.log(x,y)
       if(worldSquares[x][y] == 1){
@@ -189,14 +194,15 @@ function MyPaintProc(){
             Boardarr.top[playerSquare.top] + 3,
             (Boardarr.side[playerSquare.left + 1] - Boardarr.side[playerSquare.left])-6,
             (Boardarr.top[playerSquare.top + 1] - Boardarr.top[playerSquare.top])-6);
+					// console.log(playerSquare.top + 1);
 }
 
 window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       || 
-      window.webkitRequestAnimationFrame || 
-      window.mozRequestAnimationFrame    || 
-      window.oRequestAnimationFrame      || 
-      window.msRequestAnimationFrame     || 
+  return  window.requestAnimationFrame       ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame    ||
+      window.oRequestAnimationFrame      ||
+      window.msRequestAnimationFrame     ||
       function(/* function */ callback, /* DOMElement */ element){
         window.setTimeout(callback, 1000 / 60);
       };
@@ -223,9 +229,9 @@ function animate() {
 
 function getBoardArray(width,height){
 var boardArray = {side:new Array(),top:new Array()};
-var widthUnits = width/40; //40 = the game spaces we want
-var heightUnits = height/40;
-	for(i=1;i<41;i++){
+var widthUnits = width/squaresWide; //40 = the game spaces we want
+var heightUnits = height/squaresTall;
+	for(i=0;i<squaresTall + 1;i++){
 		boardArray.side.push(widthUnits*i);
 		boardArray.top.push(heightUnits*i);
 	}
@@ -235,6 +241,7 @@ var heightUnits = height/40;
 </script>
 </head>
 	<body>
-		<canvas id="game" width="600" height="600" tabindex="1"></canvas>	
+		<canvas id="game" width="600" height="600" tabindex="1"></canvas>
+		<div id='debug'></div>
 	</body>
 </html>
