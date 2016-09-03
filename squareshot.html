@@ -143,16 +143,16 @@ function GameProc(){
 	if (iKey == true){
 		switch (playerSquare.direction) {
 			case 'up':
-				worldSquares[playerSquare.left][playerSquare.top] = 0;
+				worldSquares[playerSquare.left][playerSquare.top - 1] = 0;
 				break;
 			case 'down':
-				worldSquares[playerSquare.left][playerSquare.top] = 0;
+				worldSquares[playerSquare.left][playerSquare.top + 1] = 0;
 				break;
 			case 'left':
-				worldSquares[playerSquare.left][playerSquare.top] = 0;
+				worldSquares[playerSquare.left - 1][playerSquare.top] = 0;
 				break;
 			case 'right':
-				worldSquares[playerSquare.left][playerSquare.top] = 0;
+				worldSquares[playerSquare.left + 1][playerSquare.top] = 0;
 				break;
 			default:
 
