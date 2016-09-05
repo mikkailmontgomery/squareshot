@@ -20,8 +20,8 @@ var worldSquares = [];
 
 
 function square(top,left){
-  this.top = top || 20;
-  this.left = left || 20;
+  this.top = top || 0;
+  this.left = left || 0;
   this.hp = 100;
   this.movable = false;
   this.collidable = true;
@@ -31,12 +31,12 @@ function square(top,left){
 	this.type = 0;
 	this.draw = function(ctx){
 		//todo: function shouldn't directly access global array Boardarr
-		ctx.fillStyle="#FFFFFF";
-		ctx.fillRect(Boardarr.side[this.previous[0]] + 3,
-				Boardarr.top[this.previous[1]] + 3,
-				(Boardarr.side[this.previous[0] + 1] - Boardarr.side[this.previous[0]])-6,
-				(Boardarr.top[this.previous[1] + 1] - Boardarr.top[this.previous[1]])-6);
-		ctx.fillStyle="#000000";
+		//ctx.fillStyle="#FFFFFF";
+		//ctx.fillRect(Boardarr.side[this.previous[0]] + 3,
+		//		Boardarr.top[this.previous[1]] + 3,
+		//		(Boardarr.side[this.previous[0] + 1] - Boardarr.side[this.previous[0]])-6,
+		//		(Boardarr.top[this.previous[1] + 1] - Boardarr.top[this.previous[1]])-6);
+		ctx.fillStyle=this.color;  //"#000000";
 		ctx.fillRect(Boardarr.side[this.left] + 3,
 				Boardarr.top[this.top] + 3,
 				(Boardarr.side[this.left + 1] - Boardarr.side[this.left])-6,
@@ -81,7 +81,7 @@ window.onload = function(){
 	game.canvas.focus();
 	game.canvas.addEventListener('keydown',myKeyDown,false);
 	game.canvas.addEventListener('keyup',myKeyUp,false);
-	playerSquare = new square();
+	playerSquare = new square(20,20);
 	playerSquare.direction = 'up';
 	//window.game = game;
 	console.log(game);
@@ -102,12 +102,15 @@ window.onload = function(){
 						(Boardarr.top[playerSquare.top + 1] - Boardarr.top[playerSquare.top])-6);
   for(x=0;x<squaresWide;x++){
     worldSquares[x]=[];
-    for(y=0;y<squaresTall;y++){
-     // console.log(x,y,'yo')
+		      //console.log(x,'yo')
+		for(y=0;y<squaresTall;y++){
+      //console.log(x,y,'yo')
       worldSquares[x][y] = new square(y,x);
-
+		//	if(x == 0){console.log(worldSquares[x][y])}
+			worldSquares[x][y].color ="#FFFFFF";
     }
   }
+	console.log(worldSquares);
   //worldSquares =
   genWorld();
   drawWorld();
@@ -131,6 +134,7 @@ function genWorld(){
     var y = Math.floor((Math.random() * squaresTall) + 1);
     //console.log(x,y)
     worldSquares[x][y].type =  Math.floor((Math.random() * 4) + 1) + 1000;
+		worldSquares[x][y].color ="#000000";
     //world.push(randomSquare(40,40));
   }
   //return world;
@@ -179,29 +183,33 @@ function GameProc(){
 		}
 	}
 	if (aKey == true){
-		console.log("left");
+		//console.log("left");
 		playerSquare.direction = 'left'
 		if(worldSquares[playerSquare.left - 1][playerSquare.top].type == 0 && playerSquare.left - 1 >= 0){
-    playerSquare.left--;
+			worldSquares[playerSquare.left][playerSquare.top].needsDrawn = true;
+    	playerSquare.left--;
     }
   }
   if (dKey == true){
 		playerSquare.direction = 'right'
     if(worldSquares[playerSquare.left + 1][playerSquare.top].type == 0 && playerSquare.left + 1 <= squaresWide){
-    playerSquare.left++;
+			worldSquares[playerSquare.left][playerSquare.top].needsDrawn = true;
+    	playerSquare.left++;
     }
   }
   if (wKey == true){
 		playerSquare.direction = 'up'
     if(worldSquares[playerSquare.left][playerSquare.top - 1].type == 0 && playerSquare.top -1 >= 0){
-    playerSquare.top--;
+			worldSquares[playerSquare.left][playerSquare.top].needsDrawn = true;
+			playerSquare.top--;
     }
   }
   if (sKey == true){
 		playerSquare.direction = 'down'
 		//document.getElementById('debug').innerHTML = worldSquares[playerSquare.left][playerSquare.top + 1] + ' ' + playerSquare.left + ' ' + playerSquare.top
     if(worldSquares[playerSquare.left][playerSquare.top + 1].type == 0 && playerSquare.top +1 <= squaresTall){
-    playerSquare.top++;
+			worldSquares[playerSquare.left][playerSquare.top].needsDrawn = true;
+			playerSquare.top++;
     }
   }
 
@@ -210,18 +218,8 @@ function GameProc(){
 }
 
 function drawWorld(){
-	//  for(i=0;i<worldSquares.length;i++){
-	//  game.ctx.fillRect(Boardarr.side[worldSquares[i][0]] + 3,
-	//            Boardarr.top[worldSquares[i][1]] + 3,
-	//            (Boardarr.side[worldSquares[i][0] + 1] - Boardarr.side[worldSquares[i][0]])-6,
-	//            (Boardarr.top[worldSquares[i][1] + 1] - Boardarr.top[worldSquares[i][1]])-6);
-	//
-	//}
   for(x=0;x<squaresWide;x++){
-    //worldSquares[x]=[];
     for(y=0;y<squaresTall;y++){
-     // console.log(x,y,'yo')
-    // console.log(x,y)
       if(worldSquares[x][y].type > 0 ){
             game.ctx.fillRect(Boardarr.side[x] + 3,
             Boardarr.top[y] + 3,
@@ -233,8 +231,17 @@ function drawWorld(){
 }
 
 function MyPaintProc(){
+	for(x=0;x<squaresWide;x++){
+		//worldSquares[x]=[];
+		for(y=0;y<squaresTall;y++){
+			if(worldSquares[x][y].needsDrawn == true)
+			{
+				//console.log("worldSquares")
+				worldSquares[x][y].draw(game.ctx);
+			}
+		}
+	}
 	playerSquare.draw(game.ctx);
-
 }
 
 window.requestAnimFrame = (function(){
