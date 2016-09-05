@@ -11,7 +11,7 @@ var wKey = false;
 var aKey = false;
 var sKey =false;
 var dKey =false;
-var iKey = false;
+var eKey = false;
 var game;
 var squaresTall = 40;
 var squaresWide = 40;
@@ -20,13 +20,28 @@ var worldSquares = [];
 
 
 function square(top,left){
-  this.top = 20
-  this.left = 20
-  this.hp = 100
-  this.movable = false
-  this.collidable = true
-  this.color = '#000000'
-  this.previous = []
+  this.top = top || 20;
+  this.left = left || 20;
+  this.hp = 100;
+  this.movable = false;
+  this.collidable = true;
+  this.color = '#000000';
+  this.previous = [];
+	this.needsDrawn = false;
+	this.type = 0;
+	this.draw = function(ctx){
+		//todo: function shouldn't directly access global array Boardarr
+		ctx.fillStyle="#FFFFFF";
+		ctx.fillRect(Boardarr.side[this.previous[0]] + 3,
+				Boardarr.top[this.previous[1]] + 3,
+				(Boardarr.side[this.previous[0] + 1] - Boardarr.side[this.previous[0]])-6,
+				(Boardarr.top[this.previous[1] + 1] - Boardarr.top[this.previous[1]])-6);
+		ctx.fillStyle="#000000";
+		ctx.fillRect(Boardarr.side[this.left] + 3,
+				Boardarr.top[this.top] + 3,
+				(Boardarr.side[this.left + 1] - Boardarr.side[this.left])-6,
+				(Boardarr.top[this.top + 1] - Boardarr.top[this.top])-6);
+	}
 }
 
 //var playerSquare = {top:20,left:20,hp:100,movable:false,collidable:true,color:'#000000'}
@@ -39,7 +54,7 @@ function myKeyDown(e){
         if (e.keyCode == 87){wKey = true;}
           if (e.keyCode == 32){spaceKey = true;}
             if (e.keyCode == 80){pKey = true;}
-							if (e.keyCode == 69){iKey = true;}
+							if (e.keyCode == 69){eKey = true;}
 }
 
 function myKeyUp(e){
@@ -51,7 +66,7 @@ function myKeyUp(e){
         if (e.keyCode == 87){wKey = false;}
           if (e.keyCode == 32){spaceKey = false;}
             if (e.keyCode == 80){pKey = false;}
-							if (e.keyCode == 69){iKey = false;}
+							if (e.keyCode == 69){eKey = false;}
 }
 
 function gameInstance(){
@@ -89,7 +104,8 @@ window.onload = function(){
     worldSquares[x]=[];
     for(y=0;y<squaresTall;y++){
      // console.log(x,y,'yo')
-      worldSquares[x][y] = 0;
+      worldSquares[x][y] = new square(y,x);
+
     }
   }
   //worldSquares =
@@ -114,18 +130,20 @@ function genWorld(){
     var x = Math.floor((Math.random() * squaresWide) + 1);
     var y = Math.floor((Math.random() * squaresTall) + 1);
     //console.log(x,y)
-    worldSquares[x][y] =  Math.floor((Math.random() * 4) + 1) + 1000;
+    worldSquares[x][y].type =  Math.floor((Math.random() * 4) + 1) + 1000;
     //world.push(randomSquare(40,40));
   }
   //return world;
 }
 
 function randomSquare(width,height){
+	//old unused, delete?
   //parameters - width and height of screen in squares.
   return [Math.floor((Math.random() * width) + 1),Math.floor((Math.random() * height) + 1)]
 }
 
 function collideSquares(t1,l1,t2,l2){
+	//old unused, delete?
 		if(t1 == t2 && l1 ==l2)
 		{
 				return true;
@@ -136,50 +154,53 @@ function collideSquares(t1,l1,t2,l2){
 		}
 }
 
+//function
+
 function GameProc(){
 
   playerSquare.previous = [playerSquare.left,playerSquare.top];
 	//document.getElementById('debug').innerHTML = worldSquares[playerSquare.left - 1][playerSquare.top] + ' ' + playerSquare.left + ' ' + playerSquare.top
-	if (iKey == true){
+	if (eKey == true){
 		switch (playerSquare.direction) {
 			case 'up':
-				worldSquares[playerSquare.left][playerSquare.top - 1] = 0;
+				worldSquares[playerSquare.left][playerSquare.top - 1].type = 0;
 				break;
 			case 'down':
-				worldSquares[playerSquare.left][playerSquare.top + 1] = 0;
+				worldSquares[playerSquare.left][playerSquare.top + 1].type = 0;
 				break;
 			case 'left':
-				worldSquares[playerSquare.left - 1][playerSquare.top] = 0;
+				worldSquares[playerSquare.left - 1][playerSquare.top].type = 0;
 				break;
 			case 'right':
-				worldSquares[playerSquare.left + 1][playerSquare.top] = 0;
+				worldSquares[playerSquare.left + 1][playerSquare.top].type = 0;
 				break;
 			default:
 
 		}
 	}
 	if (aKey == true){
+		console.log("left");
 		playerSquare.direction = 'left'
-		if(worldSquares[playerSquare.left - 1][playerSquare.top] == 0 && playerSquare.left - 1 >= 0){
+		if(worldSquares[playerSquare.left - 1][playerSquare.top].type == 0 && playerSquare.left - 1 >= 0){
     playerSquare.left--;
     }
   }
   if (dKey == true){
 		playerSquare.direction = 'right'
-    if(worldSquares[playerSquare.left + 1][playerSquare.top] == 0 && playerSquare.left + 1 <= squaresWide){
+    if(worldSquares[playerSquare.left + 1][playerSquare.top].type == 0 && playerSquare.left + 1 <= squaresWide){
     playerSquare.left++;
     }
   }
   if (wKey == true){
 		playerSquare.direction = 'up'
-    if(worldSquares[playerSquare.left][playerSquare.top - 1] == 0 && playerSquare.top -1 >= 0){
+    if(worldSquares[playerSquare.left][playerSquare.top - 1].type == 0 && playerSquare.top -1 >= 0){
     playerSquare.top--;
     }
   }
   if (sKey == true){
 		playerSquare.direction = 'down'
 		//document.getElementById('debug').innerHTML = worldSquares[playerSquare.left][playerSquare.top + 1] + ' ' + playerSquare.left + ' ' + playerSquare.top
-    if(worldSquares[playerSquare.left][playerSquare.top + 1] == 0 && playerSquare.top +1 <= squaresTall){
+    if(worldSquares[playerSquare.left][playerSquare.top + 1].type == 0 && playerSquare.top +1 <= squaresTall){
     playerSquare.top++;
     }
   }
@@ -201,7 +222,7 @@ function drawWorld(){
     for(y=0;y<squaresTall;y++){
      // console.log(x,y,'yo')
     // console.log(x,y)
-      if(worldSquares[x][y] > 0 ){
+      if(worldSquares[x][y].type > 0 ){
             game.ctx.fillRect(Boardarr.side[x] + 3,
             Boardarr.top[y] + 3,
             (Boardarr.side[x + 1] - Boardarr.side[x])-6,
@@ -212,18 +233,8 @@ function drawWorld(){
 }
 
 function MyPaintProc(){
-        game.ctx.fillStyle="#FFFFFF";
-  game.ctx.fillRect(Boardarr.side[playerSquare.previous[0]] + 3,
-            Boardarr.top[playerSquare.previous[1]] + 3,
-            (Boardarr.side[playerSquare.previous[0] + 1] - Boardarr.side[playerSquare.previous[0]])-6,
-            (Boardarr.top[playerSquare.previous[1] + 1] - Boardarr.top[playerSquare.previous[1]])-6);
-    game.ctx.fillStyle="#000000";
-      game.ctx.fillRect(Boardarr.side[playerSquare.left] + 3,
-            Boardarr.top[playerSquare.top] + 3,
-            (Boardarr.side[playerSquare.left + 1] - Boardarr.side[playerSquare.left])-6,
-            (Boardarr.top[playerSquare.top + 1] - Boardarr.top[playerSquare.top])-6);
+	playerSquare.draw(game.ctx);
 
-					// console.log(playerSquare.top + 1);
 }
 
 window.requestAnimFrame = (function(){
