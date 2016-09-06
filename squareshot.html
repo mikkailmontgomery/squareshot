@@ -18,6 +18,9 @@ var squaresWide = 40;
 var Boardarr;
 var worldSquares = [];
 
+function displayBox(){
+	this.draw()
+}
 
 function square(top,left){
   this.top = top || 0;
@@ -31,16 +34,12 @@ function square(top,left){
 	this.type = 0;
 	this.draw = function(ctx){
 		//todo: function shouldn't directly access global array Boardarr
-		//ctx.fillStyle="#FFFFFF";
-		//ctx.fillRect(Boardarr.side[this.previous[0]] + 3,
-		//		Boardarr.top[this.previous[1]] + 3,
-		//		(Boardarr.side[this.previous[0] + 1] - Boardarr.side[this.previous[0]])-6,
-		//		(Boardarr.top[this.previous[1] + 1] - Boardarr.top[this.previous[1]])-6);
-		ctx.fillStyle=this.color;  //"#000000";
+		ctx.fillStyle=this.color;
 		ctx.fillRect(Boardarr.side[this.left] + 3,
 				Boardarr.top[this.top] + 3,
 				(Boardarr.side[this.left + 1] - Boardarr.side[this.left])-6,
 				(Boardarr.top[this.top + 1] - Boardarr.top[this.top])-6);
+		this.needsDrawn = false;
 	}
 }
 
@@ -133,7 +132,7 @@ function genWorld(){
     var x = Math.floor((Math.random() * squaresWide) + 1);
     var y = Math.floor((Math.random() * squaresTall) + 1);
     //console.log(x,y)
-    worldSquares[x][y].type =  Math.floor((Math.random() * 4) + 1) + 1000;
+    worldSquares[x][y].type =  Math.floor((Math.random() * 4) + 1) + 1;
 		worldSquares[x][y].color ="#000000";
     //world.push(randomSquare(40,40));
   }
@@ -158,7 +157,18 @@ function collideSquares(t1,l1,t2,l2){
 		}
 }
 
-//function
+function inspectSquare(x,y){
+	switch (worldSquares[x][y].type) {
+		case 0:
+
+			break;
+			case 0:
+
+				break;
+		default:
+
+	}
+}
 
 function GameProc(){
 
@@ -289,6 +299,7 @@ function getBoardArray(width,height){
 </script>
 </head>
 	<body>
+		<div id="hud" width="600" height="40" style="border-style:solid;border-size:3px;width:600px;height:40px;">&nbsp;</div>
 		<canvas id="game" width="600" height="600" tabindex="1"></canvas>
 		<div id='debug'></div>
 	</body>
