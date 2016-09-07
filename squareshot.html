@@ -82,6 +82,8 @@ window.onload = function(){
 	game.canvas.addEventListener('keyup',myKeyUp,false);
 	playerSquare = new square(20,20);
 	playerSquare.direction = 'up';
+	playerSquare.buildingSquares = 0;
+	playerSquare.throwingSquares = 0;
 	//window.game = game;
 	console.log(game);
 	Boardarr = getBoardArray(game.width,game.height);
@@ -160,11 +162,20 @@ function collideSquares(t1,l1,t2,l2){
 function inspectSquare(x,y){
 	switch (worldSquares[x][y].type) {
 		case 0:
+			return;
+			break;
+		case 1:
+			return;
+			break;
+		case 2:
 
 			break;
-			case 0:
-
-				break;
+		case 3:
+			playerSquare.buildingSquares += 1;
+			break;
+		case 4:
+			playerSquare.throwingSquares += 1;
+			break;
 		default:
 
 	}
